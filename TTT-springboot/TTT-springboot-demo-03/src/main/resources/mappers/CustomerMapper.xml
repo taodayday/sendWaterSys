@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ttt.water.mapper.CustomerMapper">
+    <select id="listCustomer" resultType="customer">
+        select cid,cust_name,cust_mobile,cust_address,cust_ticket from customer
+    </select>
+
+    <select id="searchCustomerByName" parameterType="string" resultType="customer">
+        select cid,cust_name,cust_mobile,cust_address,cust_ticket from customer
+        where 1 = 1
+        <!-- 条件成立：表示表单输入的客户名称不为空，根据名称搜索客户信息 -->
+        <if test="custName != null and  custName != ''">
+            and cust_name like CONCAT('%',#{custName},'%')
+        </if>
+    </select>
+
+    <insert id="saveCustomer" parameterType="Customer" >
+        insert into customer(cust_name,cust_mobile,cust_address,cust_ticket)
+        values(#{custName},#{custMobile},#{custAddress},#{custTicket})
+    </insert>
+
+    <delete id="deleteCustomer" parameterType="int">
+        delete from customer
+        where cid = #{cid}
+    </delete>
+
+    <update id="updateCustomer" parameterType="Customer">
+        update customer
+        set cust_name = #{custName},cust_address = #{custAddress}
+          ,cust_mobile = #{custMobile},cust_ticket = #{custTicket}
+        where cid = #{cid}
+    </update>
+
+    <select id="getCustomerById" parameterType="int" resultType="Customer">
+        select cid,cust_name,cust_mobile,cust_address,cust_ticket
+        from customer
+        where cid = #{cid}
+    </select>
+</mapper>

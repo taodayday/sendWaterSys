@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title> XXX送水公司后台管理系统</title>
+
+    <!--Bootstrap固定框架-->
+    <link rel='stylesheet' th:href="@{/webjars/bootstrap/3.3.7/css/bootstrap.css}">
+    <link rel='stylesheet' th:href="@{/webjars/bootstrap/3.3.7/css/bootstrap-theme.css}">
+    <!--图标库-->
+    <link rel='stylesheet' th:href='@{/css/material-design-iconic-font.min.css}'>
+    <!--核心样式-->
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <script th:src="@{/webjars/jquery/3.3.1/jquery.js}"></script>
+
+    <script>
+        $(function(){
+
+            $("span[id=add]").click(function () {
+                let wid = $(this).attr("class");
+                let workerSalary = $(this).next().text();
+                workerSalary = parseInt(workerSalary);
+                workerSalary += 100;
+                console.log(wid+"----"+workerSalary);
+                $(this).next().text(workerSalary);
+                // jQuery对AJAX的封装
+                $.ajax({
+                    // 提交给服务器的路径
+                    url:"/worker/adjustSalary",
+                    // 提交给服务器的数据
+                    data:{"wid":wid,"workerSalary":workerSalary},
+                    // 数据的提交方式
+                    method:"POST",
+                    // 请求成功后的回调函数
+                    success:function(data,status){
+                        if("success" == data) {
+                            alert("工资调整成功");
+                        } else {
+                            alert("工资调整失败");
+                        }
+                    }
+                })
+            })
+
+            $("span[id=sub]").click(function () {
+                let wid = $(this).attr("class");
+                let workerSalary = $(this).prev().text();
+                workerSalary = parseInt(workerSalary);
+                console.log(wid+"---"+workerSalary);
+                workerSalary -= 100;
+                $(this).prev().text(workerSalary);
+                $.ajax({
+                    url:"/worker/adjustSalary",
+                    data:{"wid":wid,"workerSalary":workerSalary},
+                    method: "POST",
+                    success: function (data,status) {
+                        if('success' == data){
+                            alert("减工资成功");
+                        } else {
+                            alert("减工资失败");
+                        }
+                    }
+                })
+            })
+        })
+    </script>
+
+    <style type="text/css">
+        tr td{
+            text-align: center;
+            font-size: 20px;
+        }
+        tr td span{
+            font-size: 24px !important;
+        }
+
+    </style>
+</head>
+<body>
+
+<div id="viewport">
+
+    <!-- Sidebar -->
+    <div id="sidebar" th:replace="waterMainMenu::menu">
+
+    </div>
+
+    <!-- Content -->
+    <div id="content">
+        <nav class="navbar navbar-default" th:replace="waterMainMenu::nav">
+
+        </nav>
+
+        <div class="col-md-4">
+            <a class="btn btn-primary" th:href="@{/worker/preSaveWorker}">添加送水工</a>
+        </div>
+
+        <div class="col-md-8">
+            <form class="form-inline" th:action="@{/worker/searchWorker}" method="get">
+                <input type="text" class="form-control" th:value="${data}" th:name="workerName" placeholder="请输入送水工名称"/>
+                <input type="submit" class="btn btn-primary" name="search" value="搜索"/>
+            </form>
+        </div>
+
+
+        <div class="container-fluid">
+            <div class="row">
+
+                <div class="col-md-12">
+                    <table class="table table-hover table-striped">
+                        <thead>
+                        <tr>
+                            <td>送水工编号</td>
+                            <td>送水工名称</td>
+                            <td>送水工底薪</td>
+                            <td>送水工提成</td>
+                            <td>送水工照片</td>
+                            <td>操作</td>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <!-- 渲染后客户列表-->
+                        <tr th:each="worker : ${workerList}">
+                            <td th:text="${worker.wid}"></td>
+                            <td th:text="${worker.workerName}"></td>
+                            <td>
+                                <span id="add" style="font-weight: bold;font-size: 2px;color:red" th:class="${worker.wid}">+</span>
+                                <span id="salary" th:text="${worker.workerSalary}"></span>
+                                <span id="sub"  style="font-weight: bold;font-size: 2px;color:red" th:class="${worker.wid}">-</span>
+                            </td>
+                            <td th:text="${worker.workerMoney}"></td>
+                            <td>
+                                <img src="../../images/user.png"
+                                     style="width:80px;height:80px"
+                                     th:if="${#strings.isEmpty(worker.workerImage)}">
+                                <img th:src="@{'http://localhost:8090/'+${worker.workerImage}}"
+                                     style="width:80px;height:80px;border:1px solid blue"
+                                     th:if="${not #strings.isEmpty(worker.workerImage)}"
+                                />
+                            </td>
+                            <td>
+                                <a class="btn btn-primary btn-sm" >修改</a>
+                                <a class="btn btn-primary btn-sm" th:href="@{'/worker/deleteWorker/'+${worker.wid}}">删除</a>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</div>
+
+</body>
+</html>

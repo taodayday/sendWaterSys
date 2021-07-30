@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ttt.water.mapper.AccountMapper">
+    <select id="login" parameterType="string" resultType="Account">
+        select id,user_name,user_pwd from account where user_name = #{userName}
+    </select>
+
+    <update id="updateProfile" parameterType="Account">
+        update account
+        set user_pwd = #{userPwd}
+        where user_name = #{userName}
+    </update>
+
+    <select id="getAccountByName" parameterType="String" resultType="Account">
+        select id,user_name,user_pwd
+        from account
+        where user_name ='admin'
+    </select>
+</mapper>

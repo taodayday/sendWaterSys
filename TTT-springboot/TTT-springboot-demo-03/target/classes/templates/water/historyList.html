@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title> XXX送水公司后台管理系统</title>
+
+    <!--Bootstrap固定框架-->
+    <link rel='stylesheet' th:href="@{/webjars/bootstrap/3.3.7/css/bootstrap.css}">
+    <link rel='stylesheet' th:href="@{/webjars/bootstrap/3.3.7/css/bootstrap-theme.css}">
+    <!--图标库-->
+    <link rel='stylesheet' th:href='@{/css/material-design-iconic-font.min.css}'>
+    <!--核心样式-->
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <script th:src="@{/webjars/jquery/3.3.1/jquery.js}"></script>
+    <script>
+        $(function() {
+            /**
+             * 表头的复选框绑定单击事件
+             * 当表头复选框选中了，下面所有复选框都选择。反之也是一样
+             */
+            $("#selectAll").click(function () {
+                $("input[name=chkHistory]").prop("checked",$(this).prop("checked"));
+            })
+            /**
+             * 批量删除按钮绑定单击事件
+             * 步骤：
+             * 1 获取表格主题所有选中的“复选框”
+             * 2 如果一个都没有选择，提示“至少选择一项”
+             * 3 定义变量存储历史id，将变量作为参数传入后端根据id批量删除
+             * 4 遍历每一个选中的复选框，拼接id
+             * 5 定义ajax，向后端发送批量删除请求
+             */
+            $("#batchDelete").click(function () {
+                let chkHistory = $("input[name=chkHistory]:checked");
+                if(chkHistory.length == 0) {
+                    alert("至少选一项");
+                    return;
+                }
+                if(!confirm("确认删除吗？")){
+                    return ;
+                }
+                let ids ="";
+                $(chkHistory).each(function () {
+                    let id = $(this).val();
+                    ids += ","+id;
+                })
+
+                // ajax发送异步请求
+                $.ajax({
+                    url:'/history/deleteBatch',
+                    data:{"ids":ids},
+                    method:"POST",
+                    success:function (data,status) {
+                        if (data == 'OK') {
+                            location.href = '/history/historyList';
+                        } else {
+                            alert("批量删除失败");
+                        }
+                    }
+                })
+            })
+        })
+    </script>
+</head>
+<body>
+
+<div id="viewport">
+
+    <!-- Sidebar -->
+    <div id="sidebar" th:replace="waterMainMenu::menu">
+
+
+    </div>
+
+    <!-- Content -->
+    <div id="content">
+        <nav class="navbar navbar-default" th:replace="waterMainMenu::nav">
+
+        </nav>
+        <div class="col-md-4">
+            <a class="btn btn-primary" th:href="@{/history/preSaveHistory}">添加历史信息</a>
+            <a class="btn btn-danger" id="batchDelete" href="#">批量删除</a>
+        </div>
+
+        <div class="col-md-8">
+            <form class="form-inline" th:action="@{/history/searchHistory}" method="get">
+                <input type="date" class="form-control" th:name="historyStart" placeholder="开始时间"/>
+                <input type="date" class="form-control" th:name="historyEnd" placeholder="结束时间"/>
+                <input type="submit" class="btn btn-primary" name="search" value="搜索"/>
+         </form>
+        </div>
+
+
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <table class="table table-hover table-striped">
+                        <thead>
+                        <tr>
+                            <td>
+                                <input type="checkbox" id="selectAll"  />全选/反选
+                            </td>
+                            <td>历史编号</td>
+                            <td>工人名称</td>
+                            <td>送水时间</td>
+                            <td>客户姓名</td>
+                            <td>送水数量</td>
+                            <td>编辑</td>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="history : ${historyList}">
+                            <td>
+                                <input type="checkbox" name="chkHistory" th:value="${history.hid}">
+                            </td>
+                            <td th:text="${history.hid}"></td>
+                            <td th:text="${history.worker.workerName}"></td>
+                            <!--
+                            使用指定的格式(yyyy-MM-dd)显示送水时间
+                             -->
+                            <td th:text="${#dates.format(history.sendWaterTime,'yyyy-MM-dd')}"></td>
+                            <td th:text="${history.customer.custName}"></td>
+                            <td th:text="${history.sendWaterCount}"></td>
+                            <td>
+                                <a class="glyphicon glyphicon-edit"
+                                   th:href="@{'/history/preUpdateHistory/'+${history.hid}}"></a>
+
+                                <a class="glyphicon glyphicon-remove"
+                                   th:href="@{'/history/deleteHistory/'+${history.hid}}"></a>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</div>
+
+</body>
+</html>

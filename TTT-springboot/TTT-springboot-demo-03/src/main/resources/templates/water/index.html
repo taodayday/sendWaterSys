@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<title>Login</title>
+		<meta charset="utf-8">
+		<link th:href="@{/css/style2.css}" rel='stylesheet' type='text/css' />
+	<style type="text/css">
+		.btn-style{
+			position: relative;
+			overflow: hidden !important;
+		}
+		.btn-style::before,.btn-style::after{
+			content: '';
+			display: block;
+			width: 80px;
+			height: 100px;
+			background-color: rgba(179,255,210,0.55);
+			opacity: 0.5;
+			position: absolute;
+			left: 0;
+			top: 0;
+			transform: skew(-15deg);
+			filter: blur(30px);
+			overflow: hidden;
+			transform: translate(-100px);
+		}
+
+		.btn-style::after{
+			width: 40px;
+			background-color: rgba(179,255,210,0.35);
+			left: 60px;
+			filter: blur(5px);
+			opacity: 0;
+		}
+
+		.btn-style:hover::before{
+			transition: 0.7s ;
+			transform: translateX(320px);
+			opacity: 0.7;
+		}
+		.btn-style:hover::after{
+			transition: 0.7s;
+			transform: translateX(320px);
+			opacity: 1;
+		}
+
+		#login-title{
+			font-size: 37px ;
+			font-weight: 600 ;
+			letter-spacing:4px;
+			text-shadow: #9e9e9e 3px 3px 7px;
+			cursor: default;
+		}
+
+		#user-name:focus,#user-password:focus,#user-name:hover,#user-password:hover{
+			border-color: rgb(122, 185, 212);
+			box-shadow: 0 0 0 2px rgba(122, 185, 212,0.3),
+						0 0 0 3px rgba(122,185,212,0.1);
+		}
+	</style>
+</head>
+<body>
+	 <!-----start-main---->
+
+	 <div class="main">
+		<div class="login-form">
+
+			<h1 id="login-title">用户登录</h1>
+				<div class="head">
+					<img src="../../images/user.png" alt=""/>
+				</div>
+				<form th:action="@{/login}" th:method="post">
+					<input type="text" class="text" name="userName" required id="user-name">
+					<input type="password" name="userPwd" required id="user-password">
+					<div class="btn-style">
+						<input type="submit" name="submit" value="登录" >
+					</div>	
+					<p><a href="#">Forgot Password ?</a></p>
+					<h1 style="color:red" ></h1>
+				</form>
+		</div>
+		 	<div class="copy-right">
+				<p>Copyright &copy; 2021.Company name All rights reserved.<a target="_blank" href="http://sc.chinaz.com/moban/">&#x7F51;&#x9875;&#x6A21;&#x677F;</a></p>
+			</div>
+		</div>
+
+<div style="display:none"><script src='http://v7.cnzz.com/stat.php?id=155540&web_id=155540' language='JavaScript' charset='gb2312'></script></div>
+
+</body>
+</html>

@@ -1,0 +1,46 @@
+server:
+  port: 8090
+
+spring:
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    url: jdbc:mysql://localhost:3306/test1?useUnicode=true&characterEncoding=UTF8&useSSL=false
+    driver-class-name: com.mysql.jdbc.Driver
+    username: root
+    password: 142810
+    druid:
+      min-idle: 5
+      max-active: 15
+      max-wait: 5000
+  thymeleaf:
+    cache: false
+    # 模板引擎的前缀
+    prefix: classpath:/templates/water/
+    # 模板引擎后缀
+    suffix: .html
+  resources:
+    static-locations: classpath:/static,classpath:/public,classpath:/resources,classpath:/META-INF/resource,file:${location}
+  # 上传到服务器的路径
+location: D:/upLoad/picture/
+
+# 配置MyBatis持久层框架
+mybatis:
+  # 执行实体类名称别名所在的包
+  type-aliases-package: com.ttt.water.entities
+  configuration:
+    # 开启驼峰命名，让数据库表的字段和Java实体类的属性完成映射
+    map-underscore-to-camel-case: true
+    # 配置日志
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    # 配置映射文件的位置
+  mapper-locations: classpath:/mappers/*Mapper.xml
+
+pagehelper:
+  # 指定分页插件使用哪种方言
+  helper-dialect: mysql
+  # 分页合理化参数，默认为false，当该值为true，pageNum<=0默认查询第一页，
+  # pageNum>pages时会查询最后一页，false时直接根据参数进行查询
+  reasonable: true
+  # 支持通过Mapper接口参数来传递分页参数
+  support-methods-arguments: true
+  params: count=countsql

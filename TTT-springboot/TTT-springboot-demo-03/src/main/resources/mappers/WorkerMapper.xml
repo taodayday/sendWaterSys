@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ttt.water.mapper.WorkerMapper">
+    <select id="listWorker" resultType="Worker">
+        select wid,worker_name,worker_salary,worker_money,worker_image from worker
+    </select>
+
+    <select id="searchWorkerByName" resultType="Worker" parameterType="String">
+        select wid,worker_name,worker_salary,worker_money,worker_image from worker
+        where 1 = 1
+        <!-- 条件成立：表示表单输入的客户名称不为空，根据名称搜索客户信息 -->
+        <if test="workerName != null and  workerName != ''">
+            and worker_name like CONCAT('%',#{workerName},'%')
+        </if>
+    </select>
+
+    <insert id="saveWorker" parameterType="Worker" >
+        insert into worker(worker_name,worker_salary,worker_money,worker_image)
+        values(#{workerName},#{workerSalary},#{workerMoney},#{workerImage})
+    </insert>
+
+    <delete id="deleteWorker" parameterType="int">
+        delete from worker
+        where wid = #{wid}
+    </delete>
+
+    <update id="adjustSalary" parameterType="int" >
+        update worker
+        set worker_salary = #{workerSalary}
+        where wid = #{wid}
+    </update>
+
+</mapper>

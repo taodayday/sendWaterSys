@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ttt.water.mapper.WaterCountMapper">
+    <select id="listWaterCount" resultType="WaterCount">
+        select w.worker_name  ,
+               ifnull(group_concat(distinct c.cust_name),'-') cust_list,
+               ifnull(sum(h.send_water_count),0) send_water_count
+        from worker w left join history h on w.wid = h.worker_id left join customer c on c.cid = h.cust_id
+        group by w.worker_name
+        order by send_water_count desc;
+    </select>
+
+    <select id="searchWaterCountByName" resultType="WaterCount" parameterType="String">
+        select w.worker_name  ,
+                ifnull(group_concat(distinct c.cust_name),'-') cust_list,
+                ifnull(sum(h.send_water_count),0) send_water_count
+        from worker w left join history h on w.wid = h.worker_id left join customer c on c.cid = h.cust_id
+        where 1 = 1
+        <!-- 条件成立：表示表单输入的客户名称不为空，根据名称搜索客户信息 -->
+        <if test="workerName != null and  workerName != ''">
+            and w.worker_name like CONCAT('%',#{workerName},'%')
+        </if>
+        group by w.worker_name
+        order by send_water_count desc
+    </select>
+
+</mapper>
